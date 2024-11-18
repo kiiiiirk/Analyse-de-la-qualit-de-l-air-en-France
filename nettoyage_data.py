@@ -2,8 +2,84 @@ import pandas as pd
 
 # Définir le chemin vers le dossier "données"
 data_path = "./données/"  # Ajustez ce chemin si nécessaire
- 
 
+# Charger les fichiers CSV
+df_correspondance = pd.read_csv(f"{data_path}correspondance-code-insee-code-postal.csv", encoding='ISO-8859-1', delimiter=';')
+df_population = pd.read_csv(f"{data_path}POPULATION_MUNICIPALE_COMMUNES_FRANCE.csv", encoding='ISO-8859-1')
+
+# Afficher les colonnes pour vérifier les noms
+print("Colonnes dans df_correspondance :")
+print(df_correspondance.columns)
+
+print("\nColonnes dans df_population :")
+print(df_population.columns)
+
+# Nettoyer les noms des colonnes pour enlever les espaces et caractères invisibles
+df_correspondance.columns = df_correspondance.columns.str.strip()  # Supprimer les espaces et caractères invisibles
+df_population.columns = df_population.columns.str.strip()
+
+# Corriger le problème de BOM dans le nom de la colonne 'ï»¿Code INSEE' dans df_correspondance
+df_correspondance.columns = df_correspondance.columns.str.replace('ï»¿', '', regex=False)
+
+# Vérifier les colonnes après nettoyage
+print("\nColonnes après nettoyage dans df_correspondance :")
+print(df_correspondance.columns)
+
+print("\nColonnes après nettoyage dans df_population :")
+print(df_population.columns)
+
+# Renommer la colonne 'codgeo' dans df_population pour qu'elle corresponde à 'Code INSEE'
+df_population.rename(columns={'codgeo': 'Code INSEE'}, inplace=True)
+
+# Vérification des doublons dans df_correspondance avant la fusion
+duplicates_correspondance = df_correspondance.duplicated(subset='Code INSEE', keep=False)  # Identifie les doublons
+duplicates_population = df_population.duplicated(subset='Code INSEE', keep=False)  # Identifie les doublons
+
+# Afficher le nombre de doublons supprimés dans chaque DataFrame
+print(f"Doublons dans df_correspondance : {duplicates_correspondance.sum()}")
+print(f"Doublons dans df_population : {duplicates_population.sum()}")
+
+# Supprimer les doublons dans chaque DataFrame avant la fusion
+df_correspondance.drop_duplicates(subset='Code INSEE', keep='first', inplace=True)
+df_population.drop_duplicates(subset='Code INSEE', keep='first', inplace=True)
+
+# Supprimer les lignes avec des NaN dans les colonnes 'Code INSEE', 'Code Postal' et les colonnes de population (qui commencent par 'pop')
+df_correspondance.dropna(subset=['Code INSEE', 'Code Postal'], inplace=True)
+df_population.dropna(subset=['Code INSEE'] + [col for col in df_population.columns if col.startswith('p')], inplace=True)
+
+# Vérification des valeurs manquantes après nettoyage
+print("\nValeurs manquantes dans le fichier correspondance après nettoyage :")
+print(df_correspondance.isnull().sum())
+
+print("\nValeurs manquantes dans le fichier population après nettoyage :")
+print(df_population.isnull().sum())
+
+# Fusionner les deux DataFrames par 'Code INSEE'
+merged_df = pd.merge(df_correspondance, df_population, on='Code INSEE', how='inner')
+
+# Supprimer les colonnes non nécessaires après la fusion
+columns_to_drop = ['DÃ©partement', 'RÃ©gion', 'Statut', 'Population', 'geo_point_2d', 'geo_shape', 'ID Geofla', 
+                   'Code Commune', 'Code Canton', 'Code Arrondissement', 'Code DÃ©partement', 'Code RÃ©gion', 'objectid', 
+                   'reg', 'dep', 'cv', 'libgeo', 'p13_pop', 'p14_pop', 'p15_pop']
+merged_df.drop(columns=columns_to_drop, inplace=True, errors='ignore')
+
+# Afficher un aperçu des premières lignes après la fusion et suppression des colonnes
+print("\nAperçu de la table fusionnée après suppression des colonnes inutiles :")
+print(merged_df.head())
+
+# Exporter le fichier fusionné en CSV
+output_file = f"{data_path}population_2016_2024.csv"
+merged_df.to_csv(output_file, index=False)  # index=False pour ne pas inclure l'index dans le fichier CSV
+print(f"Fichier fusionné exporté sous : {output_file}")
+
+'''
+
+# Exporter le fichier fusionné en CSV
+output_file = f"{data_path}table_fusionnee.csv"
+merged_df.to_csv(output_file, index=False)  # index=False pour ne pas inclure l'index dans le fichier CSV
+print(f"Fichier fusionné exporté sous : {output_file}")
+'''
+'''
 # Charger les fichiers bruts
 population_2024 = pd.read_csv(f"{data_path}population2024.csv")  # Fichier population2024.csv
 population_2016 = pd.read_csv(f"{data_path}population2016.csv", delimiter=';')  # Fichier population2016.csv
@@ -54,9 +130,9 @@ fusion_finale = fusion_finale[cols]
 # Exporter la fusion finale
 fusion_finale.to_csv(f"{data_path}population_fr_2016_2024.csv", index=False)
 print(f"Fichier de fusion finale (population_fr_2016_2024.csv) enregistré avec {len(fusion_finale)} lignes.")
+'''
 
-
-
+'''
 # Charger les données avec toutes les colonnes
 villes_polluants = pd.read_csv(f"{data_path}villes_polluants.csv")
 
@@ -127,7 +203,7 @@ print(table_pivot.head())
 output_file = f"{data_path}villes_polluants_cleaned.csv"
 table_pivot.to_csv(output_file, index=False)
 print(f"Fichier nettoyé exporté sous : {output_file}")
-
+'''
 
 
 '''
