@@ -73,66 +73,6 @@ merged_df.to_csv(output_file, index=False)  # index=False pour ne pas inclure l'
 print(f"Fichier fusionné exporté sous : {output_file}")
 
 '''
-
-# Exporter le fichier fusionné en CSV
-output_file = f"{data_path}table_fusionnee.csv"
-merged_df.to_csv(output_file, index=False)  # index=False pour ne pas inclure l'index dans le fichier CSV
-print(f"Fichier fusionné exporté sous : {output_file}")
-'''
-'''
-# Charger les fichiers bruts
-population_2024 = pd.read_csv(f"{data_path}population2024.csv")  # Fichier population2024.csv
-population_2016 = pd.read_csv(f"{data_path}population2016.csv", delimiter=';')  # Fichier population2016.csv
-
-# Convertir `Code INSEE` en type numérique pour éviter les incohérences
-population_2024['code_commune_INSEE'] = pd.to_numeric(population_2024['code_commune_INSEE'], errors='coerce')
-population_2016['Code INSEE'] = pd.to_numeric(population_2016['Code INSEE'], errors='coerce')
-
-# Filtrer les colonnes nécessaires pour chaque fichier
-population_2024 = population_2024[
-    ['code_commune_INSEE', 'code_postal', 'code_commune', 'surface', 'population']
-]
-population_2016 = population_2016[
-    ['Nom de la région', 'Code département', 'Nom de la commune', 'Population totale', 'Code INSEE']
-]
-
-# Renommer les colonnes pour correspondre à une clé commune et à une meilleure lecture
-population_2024 = population_2024.rename(columns={'code_commune_INSEE': 'Code INSEE', 'population': 'population_2024', 'surface': 'superficie'})
-population_2016 = population_2016.rename(columns={'Population totale': 'population_2016'})
-
-# Nettoyage de population_2024
-colonnes_essentielles_2024 = ['Code INSEE', 'code_postal', 'code_commune', 'superficie', 'population_2024']
-population_2024_cleaned = (
-    population_2024
-    .drop_duplicates(subset=['Code INSEE'])  # Suppression des doublons basés sur `Code INSEE`
-    .dropna(subset=colonnes_essentielles_2024)  # Suppression des lignes avec des valeurs manquantes dans les colonnes essentielles
-)
-population_2024_cleaned.to_csv(f"{data_path}population2024_cleaned.csv", index=False)
-print(f"Fichier population2024_cleaned.csv enregistré avec {len(population_2024_cleaned)} lignes.")
-
-# Nettoyage de population_2016
-colonnes_essentielles_2016 = ['Code INSEE', 'Nom de la région', 'Code département', 'Nom de la commune', 'population_2016']
-population_2016_cleaned = (
-    population_2016
-    .drop_duplicates(subset=['Code INSEE'])  # Suppression des doublons basés sur `Code INSEE`
-    .dropna(subset=colonnes_essentielles_2016)  # Suppression des lignes avec des valeurs manquantes dans les colonnes essentielles
-)
-population_2016_cleaned.to_csv(f"{data_path}population2016_cleaned.csv", index=False)
-print(f"Fichier population2016_cleaned.csv enregistré avec {len(population_2016_cleaned)} lignes.")
-
-# Fusion des fichiers nettoyés
-fusion_finale = pd.merge(population_2024_cleaned, population_2016_cleaned, on='Code INSEE', how='inner')
-
-# Réorganiser les colonnes pour mettre les colonnes de population côte à côte et à la fin
-cols = [col for col in fusion_finale.columns if col not in ['population_2016', 'population_2024']] + ['population_2016', 'population_2024']
-fusion_finale = fusion_finale[cols]
-
-# Exporter la fusion finale
-fusion_finale.to_csv(f"{data_path}population_fr_2016_2024.csv", index=False)
-print(f"Fichier de fusion finale (population_fr_2016_2024.csv) enregistré avec {len(fusion_finale)} lignes.")
-'''
-
-'''
 # Charger les données avec toutes les colonnes
 villes_polluants = pd.read_csv(f"{data_path}villes_polluants.csv")
 
@@ -205,7 +145,7 @@ table_pivot.to_csv(output_file, index=False)
 print(f"Fichier nettoyé exporté sous : {output_file}")
 '''
 
-
+##A MODIFIER(CEST PAS LA BONNE BASE)
 '''
 import pandas as pd
 
