@@ -608,7 +608,7 @@ def final_population_processing(data_path):
         logging.info("Aperçu des données finales affiché.")
 
         # Exporter le fichier final fusionné
-        output_file = f"{data_path}villes_pollution_population(FINAL).csv"
+        output_file = f"{data_path}villes_pollution_population.csv"
         final_merged_df.to_csv(output_file, index=False)
         logging.info(f"Fichier final exporté sous : {output_file}")
         print(f"Fichier final exporté sous : {output_file}")
