@@ -24,8 +24,8 @@ df = pd.read_csv(file_path)
 # Vérifier que les colonnes nécessaires existent
 if all(col in df.columns for col in ['NO2', 'O3', 'PM10', 'PM2.5', 'Altitude Moyenne']):
     # Créer des catégories d'altitude
-    bins = [0, 200, 500, 1000, 2000, 3000]  # Tranches d'altitude (en mètres)
-    labels = ['0-200m', '200-500m', '500-1000m', '1000-2000m', '2000-3000m']
+    bins = [0, 200, 500, 1000, 2000]  # Tranches d'altitude (en mètres)
+    labels = ['0-200m', '200-500m', '500-1000m', '1000-2000m']
     df['Altitude_Catégorie'] = pd.cut(df['Altitude Moyenne'], bins=bins, labels=labels)
 
     # Filtrer les données valides
@@ -60,5 +60,7 @@ if all(col in df.columns for col in ['NO2', 'O3', 'PM10', 'PM2.5', 'Altitude Moy
 
     # Afficher le graphique
     plt.show()
+    plt.savefig('boxplot.png', dpi=300)
+
 else:
     print("Certaines colonnes nécessaires ('NO2', 'O3', 'PM10', 'PM2.5', 'Altitude Moyenne') ne sont pas présentes dans le fichier.")
