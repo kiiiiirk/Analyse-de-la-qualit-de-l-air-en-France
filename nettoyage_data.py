@@ -313,9 +313,13 @@ def process_pollutant_data(data_path):
             group[numeric_cols] = group[numeric_cols].interpolate(method='time', limit_direction='both')
             return group
 
-        # Appliquer l'interpolation
-        table_pivot = table_pivot.groupby(['Postal_Code', 'City', 'Department'], group_keys=False).apply(
-            interpolate_group)
+        # Identifier les colonnes numériques à interpoler
+        numeric_cols = table_pivot.select_dtypes(include=['float', 'int']).columns
+
+        # Appliquer l'interpolation sur les colonnes numériques groupées par 'Postal_Code', 'City', 'Department'
+        table_pivot[numeric_cols] = table_pivot.groupby(['Postal_Code', 'City', 'Department'])[numeric_cols].transform(
+            lambda x: x.interpolate(method='time', limit_direction='both')
+        )
         logging.info("Interpolation temporelle appliquée aux groupes.")
 
         # Réinitialiser l'index après interpolation
