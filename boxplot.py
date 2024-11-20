@@ -60,7 +60,6 @@ if all(col in df.columns for col in ['NO2', 'O3', 'PM10', 'PM2.5', 'Altitude Moy
 
     # Afficher le graphique
     plt.show()
-    plt.savefig('boxplot.png', dpi=300)
 
 else:
     print("Certaines colonnes nécessaires ('NO2', 'O3', 'PM10', 'PM2.5', 'Altitude Moyenne') ne sont pas présentes dans le fichier.")
